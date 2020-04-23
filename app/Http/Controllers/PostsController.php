@@ -24,7 +24,7 @@ class PostsController extends Controller
         // $posts =  Post::orderBy('title', 'desc')->get();
 
         //PAGINATION
-        $posts = Post::orderBy('created_at', 'desc')->paginate(1);
+        $posts = Post::orderBy('created_at', 'desc')->paginate(5);
 
         return view('posts.index')->with('posts', $posts);
     }
@@ -57,6 +57,9 @@ class PostsController extends Controller
         $post->title = $request->input('title');
         $post->body = $request->input('body');
 
+        //get currently logged in user and put it in the user id
+        $post->user_id = auth()->user()->id;
+
         //saving the post
         $post->save();
 
@@ -83,7 +86,8 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.edit')->with('post', $post);
     }
 
     /**
@@ -95,7 +99,20 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        //creating post (just like tinker)
+        $post = Post::find($id);
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+
+        //saving the post
+        $post->save();
+
+        return redirect('/posts')->with('success', 'Post Updated Successfully.');
     }
 
     /**
@@ -106,6 +123,9 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+
+        return redirect('/posts')->with('success', 'Post Removed Successfully.');
     }
 }

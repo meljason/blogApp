@@ -28,3 +28,7 @@ Route::get('/services', 'PagesController@services');
 
 //create all the route to all the functions in the post controller
 Route::resource('posts', 'PostsController');
+
+Auth::routes();
+
+Route::get('/dashboard', 'DashboardController@index');
