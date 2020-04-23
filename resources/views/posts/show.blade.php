@@ -3,6 +3,9 @@
 @section('content')
     <a href="/posts" class="btn btn-dark">Go back</a>
     <h1>{{$post->title}}</h1>
+    <img style="width: 100%;" src="/storage/cover_images/{{$post->cover_image}}" alt="" srcset="">
+    <br>
+    <br>
     <div>
         {{-- user 2 exclamation mark to use the html  --}}
         {!!$post->body!!}

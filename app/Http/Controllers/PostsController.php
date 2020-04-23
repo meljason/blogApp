@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
@@ -61,13 +62,32 @@ class PostsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'cover_mage' => 'image|nullable|max:1999',
         ]);
+
+        //handle file upload
+        if ($request->hasFile('cover_image')) {
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            //get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            //get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            //Filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            //Upload the image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+
+        } else {
+            $fileNameToStore = 'noimage.jpg';
+        }
 
         //creating post (just like tinker)
         $post = new Post;
         $post->title = $request->input('title');
         $post->body = $request->input('body');
+        $post->cover_image = $fileNameToStore;
 
         //get currently logged in user and put it in the user id
         $post->user_id = auth()->user()->id;
@@ -119,13 +139,32 @@ class PostsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
         ]);
+
+        //handle file upload
+        if ($request->hasFile('cover_image')) {
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            //get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            //get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            //Filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            //Upload the image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+
+        }
 
         //creating post (just like tinker)
         $post = Post::find($id);
         $post->title = $request->input('title');
         $post->body = $request->input('body');
+        if ($request->hasFile('cover_image')) {
+            Storage::delete('public/cover_images/' . $post->cover_image);
+            $post->cover_image = $fileNameToStore;
+        }
 
         //saving the post
         $post->save();
@@ -147,7 +186,12 @@ class PostsController extends Controller
         if (auth()->user()->id !== $post->user_id) {
             return redirect('/posts')->with('error', 'Unauthorized Page');
         }
-        
+
+        if ($post->cover_image != 'noimage.jpg') {
+            //Delete the image
+            Storage::delete('public/cover_images/' . $post->cover_images);
+        }
+
         $post->delete();
 
         return redirect('/posts')->with('success', 'Post Removed Successfully.');
