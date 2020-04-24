@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Contact Us</h1>
-
+    <hr>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -26,6 +26,18 @@
 
                     <button class="btn btn-primary" type="submit">Send Message</button>
                 </form>
+            </div>
+            <div class="col-md-6">
+                <h4>Contact Information</h4>
+                <hr>
+                <div class="pl-4">
+                    <strong>Headquater</strong>
+                    <p>100 Queen St. W.</p>
+                    <p>Toronto, ON</p>
+                    <p>M5H 2N2</p>
+                    <strong>Telephone</strong>
+                    <p>+1 647-823-1924</p>
+                </div>
             </div>
         </div>
     </div>
