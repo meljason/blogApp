@@ -26,6 +26,18 @@ Route::get('/', 'PagesController@index');
 Route::get('/about', 'PagesController@about');
 Route::get('/services', 'PagesController@services');
 
+
+//for the contact form
+Route::get('/contact', [
+    'uses' => 'ContactMessageController@create'
+]);
+
+Route::post('/contact', [
+    'uses' => 'ContactMessageController@store',
+    'as' => 'contact.store'
+]);
+
+
 //create all the route to all the functions in the post controller
 Route::resource('posts', 'PostsController');
 
